@@ -1,0 +1,28 @@
+<Application x:Class="NelCapeTown.ExplorerOrchestrator.App.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:NelCapeTown.ExplorerOrchestrator.App"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+
+        <!-- Dark theme — default; overwritten at runtime by ApplyTheme() -->
+        <SolidColorBrush x:Key="ThemeAppBg"                Color="#1E1E1E"/>
+        <SolidColorBrush x:Key="ThemeHeaderBg"             Color="#252525"/>
+        <SolidColorBrush x:Key="ThemeHeaderBorder"         Color="#333333"/>
+        <SolidColorBrush x:Key="ThemePrimaryText"          Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="ThemeSubText"              Color="#606060"/>
+        <SolidColorBrush x:Key="ThemeEmptyText"            Color="#555555"/>
+        <SolidColorBrush x:Key="ThemeCardBg"               Color="#2D2D2D"/>
+        <SolidColorBrush x:Key="ThemeCardBorder"           Color="#3D3D3D"/>
+        <SolidColorBrush x:Key="ThemeCardHoverBg"          Color="#383838"/>
+        <SolidColorBrush x:Key="ThemeCardHoverBorder"      Color="#5A5A5A"/>
+        <SolidColorBrush x:Key="ThemeActionBtnFg"          Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="ThemeActionBtnBg"          Color="#3A3A3A"/>
+        <SolidColorBrush x:Key="ThemeActionBtnBorder"      Color="#555555"/>
+        <SolidColorBrush x:Key="ThemeActionBtnHoverBg"     Color="#4A4A4A"/>
+        <SolidColorBrush x:Key="ThemeActionBtnHoverBorder" Color="#6A6A6A"/>
+        <SolidColorBrush x:Key="ThemeActionBtnPressedBg"   Color="#252525"/>
+        <SolidColorBrush x:Key="ThemeDeleteBtnFg"          Color="#666666"/>
+
+    </Application.Resources>
+</Application>

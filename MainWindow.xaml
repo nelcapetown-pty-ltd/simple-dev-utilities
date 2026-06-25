@@ -1,0 +1,202 @@
+<Window x:Class="NelCapeTown.ExplorerOrchestrator.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:NelCapeTown.ExplorerOrchestrator.App"
+        mc:Ignorable="d"
+        Title="Explorer Orchestrator" Height="600" Width="960"
+        MinWidth="400" MinHeight="300"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource ThemeAppBg}">
+
+    <Window.Resources>
+
+        <Style x:Key="FolderCardStyle" TargetType="Border">
+            <Setter Property="Width" Value="180"/>
+            <Setter Property="Height" Value="140"/>
+            <Setter Property="Margin" Value="8"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Background" Value="{DynamicResource ThemeCardBg}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeCardBorder}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource ThemeCardHoverBg}"/>
+                    <Setter Property="BorderBrush" Value="{DynamicResource ThemeCardHoverBorder}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="DeleteButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="{DynamicResource ThemeDeleteBtnFg}"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Width" Value="22"/>
+            <Setter Property="Height" Value="22"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="4" Padding="2">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#C0392B"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#922B21"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ActionButtonStyle" TargetType="Button">
+            <Setter Property="Foreground" Value="{DynamicResource ThemeActionBtnFg}"/>
+            <Setter Property="Background" Value="{DynamicResource ThemeActionBtnBg}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeActionBtnBorder}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="14,7"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="5"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource ThemeActionBtnHoverBg}"/>
+                                <Setter Property="BorderBrush" Value="{DynamicResource ThemeActionBtnHoverBorder}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource ThemeActionBtnPressedBg}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Window.Resources>
+
+    <DockPanel>
+
+        <!-- Header toolbar -->
+        <Border DockPanel.Dock="Top"
+                Background="{DynamicResource ThemeHeaderBg}" Padding="16,10"
+                BorderBrush="{DynamicResource ThemeHeaderBorder}" BorderThickness="0,0,0,1">
+            <DockPanel LastChildFill="False">
+                <TextBlock DockPanel.Dock="Left"
+                           Text="Explorer Orchestrator"
+                           Foreground="{DynamicResource ThemePrimaryText}"
+                           FontSize="16" FontWeight="SemiBold"
+                           VerticalAlignment="Center" Margin="0,0,16,0"/>
+                <WrapPanel DockPanel.Dock="Right" VerticalAlignment="Center">
+                    <Button Content="+ Add Folder"
+                            Style="{StaticResource ActionButtonStyle}"
+                            Click="AddFolder_Click" Margin="0,2,8,2"/>
+                    <Button Content="Save"
+                            Style="{StaticResource ActionButtonStyle}"
+                            Click="SaveButton_Click" Margin="0,2,8,2"/>
+                    <Button x:Name="ThemeToggleButton"
+                            Content="Light Theme"
+                            Style="{StaticResource ActionButtonStyle}"
+                            Click="ThemeToggle_Click" Margin="0,2,8,2"/>
+                    <Button Content="Open All in Explorer"
+                            Style="{StaticResource ActionButtonStyle}"
+                            Click="OpenAll_Click" Margin="0,2,0,2"/>
+                </WrapPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- Content area -->
+        <Grid>
+
+            <TextBlock x:Name="EmptyMessage"
+                       Text="No folders yet.  Click '+ Add Folder' to get started."
+                       Foreground="{DynamicResource ThemeEmptyText}" FontSize="15"
+                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Visibility="Collapsed"/>
+
+            <ScrollViewer x:Name="FolderScrollViewer"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled"
+                          Background="{DynamicResource ThemeAppBg}"
+                          Padding="8">
+                <ItemsControl x:Name="FolderList">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Margin="4"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type local:FolderEntry}">
+                            <Border Style="{StaticResource FolderCardStyle}"
+                                    ToolTip="{Binding Path}">
+                                <Grid>
+
+                                    <!-- Transparent click-to-open overlay (bottom Z-order) -->
+                                    <Button Tag="{Binding}" Click="OpenFolder_Click"
+                                            HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                            FocusVisualStyle="{x:Null}">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Rectangle Fill="Transparent"/>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+
+                                    <!-- Card content (non-interactive) -->
+                                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
+                                                IsHitTestVisible="False">
+                                        <TextBlock Text="📁" FontSize="36"
+                                                   HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                                        <TextBlock Text="{Binding Name}"
+                                                   Foreground="{DynamicResource ThemePrimaryText}"
+                                                   FontSize="12" FontWeight="Medium"
+                                                   HorizontalAlignment="Center"
+                                                   TextWrapping="Wrap" TextAlignment="Center"
+                                                   MaxWidth="156" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Text="{Binding Path}"
+                                                   Foreground="{DynamicResource ThemeSubText}"
+                                                   FontSize="9"
+                                                   HorizontalAlignment="Center"
+                                                   MaxWidth="156" Margin="0,3,0,0"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   ToolTip="{Binding Path}"/>
+                                    </StackPanel>
+
+                                    <!-- Delete button (top Z-order) -->
+                                    <Button Style="{StaticResource DeleteButtonStyle}"
+                                            Content="✕"
+                                            HorizontalAlignment="Right" VerticalAlignment="Top"
+                                            Margin="0,5,5,0"
+                                            Tag="{Binding}" Click="DeleteFolder_Click"/>
+
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+        </Grid>
+
+    </DockPanel>
+</Window>
