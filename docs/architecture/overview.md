@@ -8,7 +8,7 @@ A collection of small, focused developer productivity utilities for Windows, eac
 
 ## Repository Layout
 
-```
+```text
 NelCapeTown.SimpleDevUtilities.slnx   ← solution file (lists all utility projects)
 │
 ├── ExplorerOrchestrator/             ← Utility 1 (self-contained)
@@ -28,8 +28,10 @@ NelCapeTown.SimpleDevUtilities.slnx   ← solution file (lists all utility proje
 └── docs/                             ← repo-wide documentation
     ├── architecture/
     │   └── overview.md               ← this file
-    └── how-to/
-        └── automating-explorer-tabs-with-ahk.md
+    ├── how-to/
+    │   └── automating-explorer-tabs-with-ahk.md
+    └── obstacles-and-workarounds/
+        └── SendLiteralKeysProblemAndSolution.md
 ```
 
 ---
@@ -41,7 +43,7 @@ Each utility is a **self-contained folder** at the repository root. This decisio
 ### Why one folder per utility
 
 | Concern | Decision |
-|---|---|
+| --- | --- |
 | **Independent deployment** | Each utility can be copied or published from its own `bin/` without touching any other utility. |
 | **Configuration isolation** | `folders.json`, `theme.txt`, and any other runtime files live beside the executable in `AppContext.BaseDirectory` — always inside the utility's own output folder. One utility's settings can never collide with another's. |
 | **No shared runtime** | There is no shared WPF shell or plugin host. Each utility is its own `.exe`. This avoids version-lock between utilities and keeps each one runnable without the others being present. |
@@ -62,7 +64,7 @@ Open a user-defined list of folders, each in its own tab inside a single Windows
 ### Files
 
 | File | Role |
-|---|---|
+| --- | --- |
 | `MainWindow.xaml` | WPF UI — folder card grid, toolbar with Add / Save / Theme / Open All buttons |
 | `MainWindow.xaml.cs` | All application logic (load, save, launch, theme) |
 | `FolderEntry.cs` | Simple model: `Path` (stored) + `Name` (derived from last path segment) |
@@ -140,7 +142,7 @@ The solution file after adding a second utility would look like:
 ## Technology Choices
 
 | Choice | Reason |
-|---|---|
+| --- | --- |
 | **.NET 10 / WPF** | Modern Windows-native UI with full access to Win32 APIs; no browser runtime dependency |
 | **AutoHotkey v2** | Lightweight Windows automation for tasks that require shell-level interaction (window management, Explorer tab control) that are impractical to do purely from managed code |
 | **COM (`Shell.Application`)** | The stable, Microsoft-supported way to query and drive Explorer windows — preferred over hwnd tracking or keyboard injection, both of which are fragile on Windows 11 |

@@ -17,7 +17,7 @@ Each utility lives in its own subfolder with its own README. They share this rep
 ## Stack
 
 - **WPF / .NET 10** — UI and application logic
-- **AutoHotkey v2** — Windows automation where WPF cannot reach
+- **AutoHotkey v2** — Windows automation via `Shell.Application` COM for tabbed Explorer navigation
 
 ---
 

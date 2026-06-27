@@ -29,7 +29,8 @@ Folders are saved to a `folders.json` file next to the executable, so your list 
 | Dark / Light theme | Full two-tone theming; preference saved to `theme.txt` |
 | Single-click open | Opens any folder directly in Explorer |
 | Batch tabbed open | Opens all folders as tabs in one Explorer window via AutoHotkey |
-| Robust tab scripting | Polls for a stable window handle — works around Windows 11's Explorer window recreation behaviour |
+| COM-driven navigation | Uses `Shell.Application` COM to navigate each tab — no keyboard simulation |
+| Robust tab scripting | Snapshots existing Explorer hwnds, polls for the new window, confirms navigation by reading the tab's live path via COM |
 | Diagnostic logging | AutoHotkey script writes a timestamped log (`OpenFoldersTabbedExplorer.log`) |
 
 ---
@@ -90,13 +91,16 @@ On first launch the app seeds a default folder list. Edit it with **+ Add Folder
 
 ## How "Open All in Explorer" works
 
-The feature is implemented in `OpenFoldersTabbedExplorer.ahk` (AutoHotkey v2):
+The feature is implemented in `OpenFoldersTabbedExplorer.ahk` (AutoHotkey v2) and drives Explorer entirely through the **`Shell.Application` COM interface** — no keyboard simulation or address-bar paste is used for navigation.
 
 1. The WPF app passes all folder paths as command-line arguments to the script.
-2. The script opens the **first** path in a new Explorer window and waits for it to appear.
-3. It polls for a stable window handle — checking whether the same `hwnd` appears in two consecutive 500 ms scans — to handle the window recreation that Windows 11 Explorer performs on startup.
-4. For each additional path it sends `Ctrl+T` (new tab), then `Ctrl+L` → path → `Enter` to navigate.
-5. Finally it switches back to the first tab with `Ctrl+1`.
+2. The script acquires a `ComObject("Shell.Application")` reference and snapshots the `hwnd` of every Explorer window that already exists.
+3. It opens the **first** path via `explorer.exe` and identifies the newly created window by diffing the live COM window list against the snapshot.
+4. It waits for the first tab to go idle (polling `tab.Busy` via COM), then reads its current path from `tab.Document.Folder.Self.Path` to confirm readiness.
+5. For each remaining path it sends `Ctrl+T` to create a new tab, then locates that tab through COM by finding the unassigned or Home-page entry in `shell.Windows`.
+6. It navigates the tab using `tab.Navigate2(path)` and confirms success by polling `tab.Document.Folder.Self.Path` until it matches the target. If `Navigate2` throws, it falls back to `tab.Navigate(path)`.
+7. After each confirmed navigation it calls `tab.Refresh()` to force directory enumeration and waits a short settle period before opening the next tab.
+8. Finally it sends `Ctrl+1` to return focus to the first tab.
 
 All steps are logged with timestamps to `OpenFoldersTabbedExplorer.log`.
 
